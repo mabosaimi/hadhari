@@ -1,18 +1,20 @@
+import os
 from functools import lru_cache
 from pathlib import Path
 
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-cred_path = Path(__file__).parent / "firebaseServiceAccount.json"
+_DEFAULT_CRED_PATH = Path(__file__).resolve().parents[2] / "firebaseServiceAccount.json"
 
 
 @lru_cache(maxsize=1)
 def get_db() -> firestore.Client:
+    cred_path = Path(os.environ.get("FIREBASE_CREDENTIALS_PATH", str(_DEFAULT_CRED_PATH)))
     try:
         firebase_admin.get_app()
     except ValueError:
-        cred = credentials.Certificate(cred_path)
+        cred = credentials.Certificate(str(cred_path))
         firebase_admin.initialize_app(cred)
 
     return firestore.client()

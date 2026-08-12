@@ -18,9 +18,8 @@ def load_messages(*, validated_only: bool = True) -> pl.DataFrame:
 
         message = {
             "id": doc.id,
-            "sender_number": data.get("sender_number"),
             "raw_message": data.get("raw_message"),
-            "prediction": data.get("prediction"),
+            "label": data.get("prediction"),
         }
 
         if not validated_only:

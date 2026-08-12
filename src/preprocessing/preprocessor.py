@@ -79,3 +79,18 @@ def clean_text(text: str) -> str:
     text = remove_punctuation(text)
 
     return normalize_whitespace(text)
+
+
+def preprocess_texts(texts: list[str]) -> list[str]:
+    """Apply clean_text to each text in the input.
+
+    Used as the preprocessing step in the sklearn Pipeline via FunctionTransformer.
+    Must be importable at deserialization time.
+
+    Returns
+    -------
+    list[str]
+        The cleaned texts.
+
+    """
+    return [clean_text(text) for text in texts]

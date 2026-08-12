@@ -3,6 +3,7 @@ from preprocessing.preprocessor import (
     clean_text,
     normalize_arabic_letters,
     normalize_whitespace,
+    preprocess_texts,
     reduce_repeated_characters,
     remove_diacritics,
     remove_punctuation,
@@ -76,3 +77,9 @@ def test_clean_text():
     assert clean_text("") == ""
     assert clean_text("    \n  ") == ""
     assert clean_text("نظيف") == "نظيف"
+
+
+def test_preprocess_texts():
+    texts = ["أهلاً", "مرحبا 😀", ""]
+    result = preprocess_texts(texts)
+    assert result == ["اهلا", "مرحبا <emoji>", ""]

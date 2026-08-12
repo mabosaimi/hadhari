@@ -10,8 +10,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import FunctionTransformer
 
-from preprocessing.preprocessor import clean_text
+from preprocessing.preprocessor import preprocess_texts
 
 SAVE_DIR = "artifacts"
 
@@ -57,7 +58,7 @@ def train(
         Trained scikit-learn pipeline
 
     """
-    X_clean = X.map_elements(clean_text)  # noqa: N806
+    X_list = X.to_list() if isinstance(X, pl.Series) else list(X)  # noqa: N806
     y_list = y.to_list() if isinstance(y, pl.Series) else list(y)
 
     if vectorizer is None:
@@ -68,12 +69,13 @@ def train(
         model = LogisticRegression(max_iter=1000)
 
     pipeline = Pipeline([
+        ("preprocessor", FunctionTransformer(preprocess_texts)),
         ("vectorizer", vectorizer),
         ("classifier", model),
     ])
 
     X_train, X_test, y_train, y_test = train_test_split(  # noqa: N806
-        X_clean,
+        X_list,
         y_list,
         test_size=test_size,
         stratify=y_list,

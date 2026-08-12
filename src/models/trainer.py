@@ -100,10 +100,9 @@ def train(
             / f"{vectorizer_name}_{dataset_size}_{accuracy_percentage}.joblib"
         )
         save_path.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump(pipeline, save_path)
 
-    joblib.dump(pipeline, save_path)
-
-    if verbose:
-        logger.info("Model saved to %s", save_path)
+        if verbose:
+            logger.info("Model saved to %s", save_path)
 
     return pipeline

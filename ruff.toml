@@ -16,7 +16,18 @@ ignore = [
   "TD002", "TD003",  # TODO comment metadata
   "ERA001",  # commented out code
   "PLR0913",  # too many args
+  "PLR0914",  # too many locals
   "D203",  # blank line before class
   "D213",  # multiline summary on second line
   "CPY001",  # copyright
 ]
+
+[lint.per-file-ignores]
+"tests/**" = [
+  "S101",     # assert is standard in pytest
+  "ANN201",   # return type annotations unnecessary for tests
+  "PLC1901",  # explicit empty string comparison is clearer in tests
+  "PLR2004",  # magic values are fine in test assertions
+  "RUF001",   # Arabic text in assertions is expected
+]
+

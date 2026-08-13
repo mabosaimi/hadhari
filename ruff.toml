@@ -22,6 +22,7 @@ ignore = [
   "PD901",  # df variable name
   "TRY003", "EM102", "EM101",  # exception message formatting
   "N803", "N806",  # uppercase X is standard ML convention
+  "ANN401",  # explicit Any annotations when dealing with untyped libraries
   "D203",  # blank line before class
   "D213",  # multiline summary on second line
   "CPY001",  # copyright

@@ -7,7 +7,7 @@ from typing import Any
 import joblib
 import numpy as np
 import polars as pl
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
@@ -54,7 +54,7 @@ def evaluate_cross_validation(
 
 
 def train(
-    X: pl.Series | Sequence[str],  # noqa: N803
+    X: pl.Series | Sequence[str],
     y: pl.Series | Sequence[Any],
     *,
     model: BaseEstimator | None = None,

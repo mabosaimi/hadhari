@@ -21,6 +21,7 @@ ignore = [
   "PLR6301",  # method could be static
   "PD901",  # df variable name
   "TRY003", "EM102", "EM101",  # exception message formatting
+  "N803", "N806",  # uppercase X is standard ML convention
   "D203",  # blank line before class
   "D213",  # multiline summary on second line
   "CPY001",  # copyright
@@ -29,7 +30,7 @@ ignore = [
 [lint.per-file-ignores]
 "tests/**" = [
   "S101",     # assert is standard in pytest
-  "ANN201",   # return type annotations unnecessary for tests
+  "ANN001", "ANN201",   # type annotations in tests
   "PLC1901",  # explicit empty string comparison is clearer in tests
   "PLR2004",  # magic values are fine in test assertions
   "RUF001",   # Arabic text in assertions is expected

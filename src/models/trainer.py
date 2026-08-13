@@ -54,11 +54,11 @@ def evaluate_cross_validation(
 
 
 def train(
-    X: pl.Series | Sequence[str],
+    X: pl.Series | Sequence[str],  # noqa: N803
     y: pl.Series | Sequence[Any],
     *,
     model: BaseEstimator | None = None,
-    vectorizer: TransformerMixin | None = None,
+    vectorizer: Any | None = None,
     test_size: float = 0.2,
     random_state: int = 42,
     cv_folds: int = 5,

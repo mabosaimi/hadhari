@@ -7,10 +7,19 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache/
+.ruff_cache/
+.coverage
 
 # Virtual environments
 .venv
 
+# Secrets & Private snapshots
 firebaseServiceAccount.json
 notebooks/throwaway.ipynb
+*.parquet
+*.csv
+
+# Model artifacts
 artifacts/
+src/models/artifacts/

@@ -1,30 +1,13 @@
 import polars as pl
 
-from db.firestore import get_db
+from data.repository import FirestoreMessageRepository, MessageRepository
 
 
-def load_messages(*, validated_only: bool = True) -> pl.DataFrame:
-    db = get_db()
-    messages_ref = db.collection("messages")
-    docs = messages_ref.stream()
-
-    messages = []
-    for doc in docs:
-        data = doc.to_dict()
-        is_validated = data.get("validated")
-
-        if validated_only and not is_validated:
-            continue
-
-        message = {
-            "id": doc.id,
-            "raw_message": data.get("raw_message"),
-            "label": data.get("prediction"),
-        }
-
-        if not validated_only:
-            message["validated"] = is_validated
-
-        messages.append(message)
-
-    return pl.DataFrame(messages)
+def load_messages(
+    repository: MessageRepository | None = None,
+    *,
+    validated_only: bool = True,
+) -> pl.DataFrame:
+    """Load messages using the specified repository or defaulting to Firestore."""
+    repo = repository if repository is not None else FirestoreMessageRepository()
+    return repo.load_messages(validated_only=validated_only)

@@ -13,10 +13,14 @@ line-ending = "lf"
 select = ["ALL"]
 ignore = [
   "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107",  # all docstring rules
+  "DOC201", "DOC501",  # docstring return/exception documentation
   "TD002", "TD003",  # TODO comment metadata
   "ERA001",  # commented out code
   "PLR0913",  # too many args
   "PLR0914",  # too many locals
+  "PLR6301",  # method could be static
+  "PD901",  # df variable name
+  "TRY003", "EM102", "EM101",  # exception message formatting
   "D203",  # blank line before class
   "D213",  # multiline summary on second line
   "CPY001",  # copyright
@@ -30,4 +34,3 @@ ignore = [
   "PLR2004",  # magic values are fine in test assertions
   "RUF001",   # Arabic text in assertions is expected
 ]
-

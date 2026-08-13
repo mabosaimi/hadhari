@@ -1,6 +1,6 @@
 import polars as pl
 
-from data.repository import FirestoreMessageRepository, MessageRepository
+from hadhari.data.repository import FirestoreMessageRepository, MessageRepository
 
 
 def load_messages(

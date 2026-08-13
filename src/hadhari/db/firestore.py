@@ -6,7 +6,7 @@ from typing import Any
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-_DEFAULT_CRED_PATH = Path(__file__).resolve().parents[2] / "firebaseServiceAccount.json"
+_DEFAULT_CRED_PATH = Path(__file__).resolve().parents[3] / "firebaseServiceAccount.json"
 
 
 @lru_cache(maxsize=1)

@@ -1,5 +1,4 @@
-
-from preprocessing.preprocessor import (
+from hadhari.preprocessing.preprocessor import (
     clean_text,
     normalize_arabic_letters,
     normalize_whitespace,

@@ -15,7 +15,7 @@ from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 
-from preprocessing.preprocessor import preprocess_texts
+from hadhari.preprocessing.preprocessor import preprocess_texts
 
 SAVE_DIR = "artifacts"
 

@@ -6,14 +6,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 
-import models.trainer
-from models.trainer import evaluate_cross_validation, train
-from preprocessing.preprocessor import preprocess_texts
+import hadhari.models.trainer
+from hadhari.models.trainer import evaluate_cross_validation, train
+from hadhari.preprocessing.preprocessor import preprocess_texts
 
 
 def test_train_end_to_end(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     # Set SAVE_DIR to tmp_path for testing
-    monkeypatch.setattr(models.trainer, "SAVE_DIR", str(tmp_path))
+    monkeypatch.setattr(hadhari.models.trainer, "SAVE_DIR", str(tmp_path))
 
     X = ["عرض خاص اشتري الان", "مرحبا كيف حالك اليوم", "احصل على خصم 50 بالمئة", "السلام عليكم ورحمة الله"] * 5
     y = [1, 0, 1, 0] * 5

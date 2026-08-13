@@ -3,7 +3,7 @@ from typing import Protocol
 
 import polars as pl
 
-from db.firestore import get_db
+from hadhari.db.firestore import get_db
 
 
 class MessageRepository(Protocol):

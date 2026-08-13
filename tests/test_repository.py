@@ -3,7 +3,7 @@ from pathlib import Path
 import polars as pl
 import pytest
 
-from data.repository import LocalFileMessageRepository, MessageRepository
+from hadhari.data.repository import LocalFileMessageRepository, MessageRepository
 
 
 def test_local_file_repository_parquet(tmp_path: Path) -> None:

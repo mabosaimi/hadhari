@@ -2,9 +2,9 @@ import argparse
 import logging
 from pathlib import Path
 
-from data.loader import load_messages
-from data.repository import LocalFileMessageRepository
-from models.trainer import train
+from hadhari.data.loader import load_messages
+from hadhari.data.repository import LocalFileMessageRepository
+from hadhari.models.trainer import train
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)

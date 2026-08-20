@@ -1,6 +1,6 @@
 import json
 import logging
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -8,12 +8,14 @@ import joblib
 import numpy as np
 import polars as pl
 from sklearn.base import BaseEstimator
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.svm import LinearSVC
 
 from hadhari.preprocessing.preprocessor import preprocess_texts
 
@@ -21,6 +23,19 @@ SAVE_DIR = "artifacts"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+
+MODELS: dict[str, Callable[[], BaseEstimator]] = {
+    "logreg": lambda: LogisticRegression(max_iter=1000),
+    "linearsvc": lambda: CalibratedClassifierCV(LinearSVC(max_iter=2000)),
+}
+
+
+def build_model(name: str) -> BaseEstimator:
+    """Construct a classifier by name. Available: logreg, linearsvc."""
+    if name not in MODELS:
+        msg = f"Unknown model: {name!r}. Available: {', '.join(MODELS)}"
+        raise ValueError(msg)
+    return MODELS[name]()
 
 
 def evaluate_cross_validation(

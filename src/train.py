@@ -1,10 +1,18 @@
 import argparse
+import hashlib
 import logging
 from pathlib import Path
+from typing import Any
 
+import mlflow
+import mlflow.sklearn
+import sklearn
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+import hadhari
 from hadhari.data.loader import load_messages
 from hadhari.data.repository import LocalFileMessageRepository
-from hadhari.models.trainer import train
+from hadhari.models.trainer import build_model, train
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -23,6 +31,12 @@ def main() -> None:
     parser.add_argument("--test-size", type=float, default=0.2, help="Test set fraction (default: 0.2)")
     parser.add_argument("--cv-folds", type=int, default=5, help="Number of cross-validation folds (default: 5)")
     parser.add_argument("--no-save", action="store_true", help="Do not save model and evaluation artifacts")
+    parser.add_argument("--model", type=str, default="logreg", help="Model type: logreg | linearsvc (default: logreg)")
+    parser.add_argument("--max-features", type=int, default=1000, help="TF-IDF max features (default: 1000)")
+    parser.add_argument("--ngram-range", type=int, nargs=2, default=[1, 2], help="TF-IDF ngram range (default: 1 2)")
+    parser.add_argument("--experiment", type=str, default="hadhari", help="MLFlow experiment name (default: hadhari)")
+    parser.add_argument("--run-name", type=str, default=None, help="MLFlow run name (default: auto-generated)")
+    parser.add_argument("--no-mlflow", action="store_true", help="Disable MLFlow tracking")
 
     args = parser.parse_args()
 
@@ -45,9 +59,19 @@ def main() -> None:
     X = df["raw_message"]
     y = df["label"]
 
-    _pipeline, metrics = train(
+    TOKEN_PATTERN = r"(?u)\b\w+\b"  # noqa: S105
+    model = build_model(args.model)
+    vectorizer = TfidfVectorizer(
+        max_features=args.max_features,
+        ngram_range=tuple(args.ngram_range),
+        token_pattern=TOKEN_PATTERN,
+    )
+
+    pipeline, metrics = train(
         X,
         y,
+        model=model,
+        vectorizer=vectorizer,
         test_size=args.test_size,
         random_state=args.seed,
         cv_folds=args.cv_folds,
@@ -56,6 +80,49 @@ def main() -> None:
     )
 
     logger.info("Training complete. Test Accuracy: %.2f%%", metrics["test_accuracy"] * 100)
+
+    if not args.no_mlflow:
+        _log_mlflow_run(args, pipeline, metrics)
+
+
+def _log_mlflow_run(args: argparse.Namespace, pipeline: Any, metrics: dict[str, Any]) -> None:
+    mlflow.set_experiment(args.experiment)
+
+    run_name = args.run_name or f"{args.model}-{args.max_features}f-{args.ngram_range[0]}-{args.ngram_range[1]}ng"
+
+    with mlflow.start_run(run_name=run_name):
+        mlflow.set_tag("hadhari_version", hadhari.__version__)
+        mlflow.set_tag("sklearn_version", sklearn.__version__)
+
+        if args.dataset_path:
+            dataset_hash = hashlib.sha256(Path(args.dataset_path).read_bytes()).hexdigest()
+            mlflow.set_tag("dataset_sha256", dataset_hash)
+            mlflow.set_tag("dataset_path", args.dataset_path)
+
+        mlflow.log_params({
+            "model_type": args.model,
+            "max_features": args.max_features,
+            "ngram_range": str(tuple(args.ngram_range)),
+            "random_state": args.seed,
+            "test_size": args.test_size,
+            "cv_folds": args.cv_folds,
+            "dataset_size": metrics["dataset_size"],
+            "train_size": metrics["train_size"],
+        })
+
+        flat_metrics = {
+            "test_accuracy": metrics["test_accuracy"],
+        }
+        flat_metrics.update(metrics["cv_metrics"])
+        mlflow.log_metrics(flat_metrics)
+
+        mlflow.sklearn.log_model(  # pyright: ignore[reportPrivateImportUsage]
+            pipeline,
+            "pipeline",
+            serialization_format="cloudpickle",
+        )
+
+    logger.info("MLFlow run logged to experiment %r as %r", args.experiment, run_name)
 
 
 if __name__ == "__main__":

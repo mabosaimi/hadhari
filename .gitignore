@@ -23,3 +23,8 @@ notebooks/throwaway.ipynb
 # Model artifacts
 artifacts/
 src/models/artifacts/
+
+# MLFlow
+mlruns/
+mlartifacts/
+*.db

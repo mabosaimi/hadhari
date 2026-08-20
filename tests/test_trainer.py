@@ -7,7 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 
 import hadhari.models.trainer
-from hadhari.models.trainer import evaluate_cross_validation, train
+from hadhari.models.trainer import build_model, evaluate_cross_validation, train
 from hadhari.preprocessing.preprocessor import preprocess_texts
 
 
@@ -70,3 +70,16 @@ def test_evaluate_cross_validation() -> None:
     assert "accuracy_mean" in cv_res
     assert "accuracy_std" in cv_res
     assert 0.0 <= cv_res["accuracy_mean"] <= 1.0
+
+
+def test_build_model() -> None:
+    logreg = build_model("logreg")
+    assert isinstance(logreg, LogisticRegression)
+
+    svc = build_model("linearsvc")
+    assert hasattr(svc, "predict_proba") or hasattr(svc, "fit")
+
+
+def test_build_model_invalid() -> None:
+    with pytest.raises(ValueError, match="Unknown model"):
+        build_model("unknown_model")

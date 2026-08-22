@@ -12,8 +12,11 @@ https://github.com/mabosaimi/hadhari-wa
 #### Hadhari website (Human-in-the-Loop interface)
 https://github.com/mabosaimi/hadhari-ui
 
-#### Hadhari Space
+#### Hadhari Space (API)
 https://huggingface.co/spaces/mabosaimi/hadhari/tree/main
+
+#### Hadhari Model (Weights)
+https://huggingface.co/mabosaimi/hadhari
 
 ---
 **Prediction API Endpoint:** https://mabosaimi-hadhari.hf.space/predict
@@ -26,13 +29,16 @@ Expects a **POST** request with the JSON payload:
 **Response:**
 ```json
 {
-  "prediction": 0,
+  "label": "not_spam",
+  "class_id": 0,
   "confidence": 0.96
 }
 ```
-**Prediction:**
-- 1 = Spam
-- 0 = Not spam
+**Labels:**
+- `spam` (Class 1)
+- `not_spam` (Class 0)
 
 **Confidence:**  
-The model's confidence percentage in its prediction.
+The model's confidence percentage in its prediction (0.0 to 1.0).
+
+
